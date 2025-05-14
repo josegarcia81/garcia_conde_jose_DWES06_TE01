@@ -35,8 +35,8 @@ CREATE TABLE instalaciones(
 
 CREATE TABLE incidencias(
 	id int(6) NOT NULL,
-    idTrabajador int(6) NOT NULL,
-    idInstalacion int(6) NOT NULL,
+    id_Trabajador int(6) NOT NULL,
+    id_Instalacion int(6) NOT NULL,
     hora varchar(5),
     descripcion varchar(100),
     
@@ -60,7 +60,7 @@ INSERT INTO instalaciones (idInstalacion, nombreInstalacion, zona, descripcionIn
 (207, 'Exteriores', 'Zona G', 'Área exterior utilizada para transito de camiones, mantenimiento y operaciones auxiliares.');
 
 -- introduccion de datos tabla INCIDENCIAS
-INSERT INTO incidencias (id, idTrabajador, idInstalacion, hora, descripcion) VALUES
+INSERT INTO incidencias (id, id_Trabajador, id_Instalacion, hora, descripcion) VALUES
 (1, 101, 201, '12:00', 'foco fundido'),
 (2, 102, 202, '12:30', 'puerta entrada rota'),
 (3, 101, 203, '13:00', 'Cilindro r4 roto'),
@@ -70,14 +70,14 @@ INSERT INTO incidencias (id, idTrabajador, idInstalacion, hora, descripcion) VAL
 (7, 101, 207, '03:00', 'foco fundido parking');
 
 -- Reglas Claves Foraneas
-ALTER TABLE incidencias
-	ADD CONSTRAINT Fk_Inc_Trabajador 
-    FOREIGN KEY (idTrabajador) 
+ ALTER TABLE incidencias
+ 	ADD CONSTRAINT Fk_Inc_Trabajador 
+    FOREIGN KEY (id_Trabajador) 
     REFERENCES trabajadores(idTrabajador) ON UPDATE CASCADE;
 
-ALTER TABLE incidencias
+ ALTER TABLE incidencias
 	ADD CONSTRAINT Fk_Inc_Instalacion 
-    FOREIGN KEY (idInstalacion) 
+    FOREIGN KEY (id_Instalacion) 
     REFERENCES instalaciones(idInstalacion) ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE incidencias 
@@ -88,8 +88,8 @@ select * from trabajadores;
 select * from instalaciones;
 
 select * from incidencias
-	join trabajadores on incidencias.idTrabajador = trabajadores.idTrabajador
-    join instalaciones on incidencias.idInstalacion = instalaciones.idInstalacion;
+	join trabajadores on incidencias.id_Trabajador = trabajadores.idTrabajador
+    join instalaciones on incidencias.id_Instalacion = instalaciones.idInstalacion;
     
 -- Pruebas de las reglas update y delete en cascada de tabla incidencias
 -- UPDATE trabajadores SET idTrabajador=104 WHERE idTrabajador=103;
