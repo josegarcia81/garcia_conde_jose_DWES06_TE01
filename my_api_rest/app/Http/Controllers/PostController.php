@@ -8,7 +8,7 @@ use App\Models\Incidencia;
 use App\DTO\IncidenciasDTO;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facaces\Http;
+use Illuminate\Support\Facades\Http;
 
 class PostController extends Controller{
 
@@ -16,30 +16,31 @@ class PostController extends Controller{
     public function getAll(){
         // Uso Try para controlar errores
         try{
-            // Consulta directa sobre la base de datos
-            $data = DB::table('incidencias')
-                                ->join('trabajadores','incidencias.idTrabajador','trabajadores.idTrabajador')
-                                ->join('instalaciones','incidencias.idInstalacion','instalaciones.idInstalacion')
-                                ->orderBy('id','asc')
-                                ->get();
+            // // Consulta directa sobre la base de datos
+            // $data = DB::table('incidencias')
+            //                     ->join('trabajadores','incidencias.idTrabajador','trabajadores.idTrabajador')
+            //                     ->join('instalaciones','incidencias.idInstalacion','instalaciones.idInstalacion')
+            //                     ->orderBy('id','asc')
+            //                     ->get();
 
-            // Mapeo de la respuesta para poder enviar datos de las otras tablas como los nombres //
-            $incidencias = $data->map(fn($incidencia)=>new IncidenciasDTO(
-                                                            $incidencia->id,
-                                                            $incidencia->idTrabajador,
-                                                            $incidencia->nombreTrabajador,
-                                                            $incidencia->idInstalacion,
-                                                            $incidencia->nombreInstalacion,
-                                                            $incidencia->hora,
-                                                            $incidencia->descripcion)
-                                    );
-            
+            // // Mapeo de la respuesta para poder enviar datos de las otras tablas como los nombres //
+            // $incidencias = $data->map(fn($incidencia)=>new IncidenciasDTO(
+            //                                                 $incidencia->id,
+            //                                                 $incidencia->idTrabajador,
+            //                                                 $incidencia->nombreTrabajador,
+            //                                                 $incidencia->idInstalacion,
+            //                                                 $incidencia->nombreInstalacion,
+            //                                                 $incidencia->hora,
+            //                                                 $incidencia->descripcion)
+            //                         );
+            $response = Http::get('http://localhost:8080/spring/getAll');
+            // return $response->json();
             return response()->json([
                 "status" => "success",
                 "code" => 200,
                 "time" => now()->toIso8601String(), // Utiliza la función de Laravel para obtener la hora en formato ISO-8601
                 "message" => "Base de datos con todas las incidencias",
-                "data" => $incidencias
+                "data" => $response->json()
             ],200);
 
         }catch(\Exception $e){
@@ -58,11 +59,11 @@ class PostController extends Controller{
     public function getById($id){
 
         try{
-            // Consulta directa sobre la tabla que corresponde con el modelo
-            $incidencia = Incidencia::find($id);
-            
+            // // Consulta directa sobre la tabla que corresponde con el modelo
+            // $incidencia = Incidencia::find($id);
+            $response = Http::get('http://localhost:8080/spring/getById/'.$id);
             // Control busqueda de incidencia
-            if (!$incidencia) {
+            if ($response->status() === 404) {
                 return response()->json([
                     "status" => "error",
                     "code" => 406,
@@ -71,13 +72,14 @@ class PostController extends Controller{
                     "data" => null
                 ], 406);
             }
+            
 
             return response()->json([
                 "status" => "success",
                 "code" => 200,
                 "time" => now()->toIso8601String(), // Utiliza la función de Laravel para obtener la hora en formato ISO-8601
                 "message" => "Base de datos con la incidencia buscada",
-                "data" => $incidencia
+                "data" => $response->json() 
             ]);
 
         }catch(\Exception $e){
@@ -103,14 +105,15 @@ class PostController extends Controller{
             ]);
 
             // Crear la incidencia
-            $incidencia = Incidencia::create($dataVal);
+            //$incidencia = Incidencia::create($dataVal);
+            $response = Http::post('http://localhost:8080/spring/create',$dataVal);
             
             return response()->json([
                 "status" => "success",
                 "code" => 201,
                 "time" => now()->toIso8601String(), // Fecha en formato ISO-8601
                 "message" => "Incidencia creada correctamente",
-                "data" => $incidencia
+                "data" => $response->json()
             ], 201);
 
         } catch (\Exception $e) {
@@ -136,26 +139,27 @@ class PostController extends Controller{
                 'descripcion' => 'required|string'
             ]);
 
-            $incidencia = Incidencia::find($id);
+            //$incidencia = Incidencia::find($id);
+            $response = Http::put('http://localhost:8080/spring/update/'.$id,$dataVal);
 
-            if(!$incidencia){
+            if(!$response->successful()){
                 return response()->json([
                     "status" => "error",
                     "code" => 406,
                     "time" => now()->toIso8601String(),
                     "message" => "Incidencia no encontrada",
-                    "data" => "id = ".$id
-                ], 406);
+                    "data" => $response->json()
+                ],406);
             }
             // Actualizar incidencia
-            $incidencia->update($dataVal);
+            //$incidencia->update($dataVal);
 
             return response()->json([
                 "status" => "success",
                 "code" => 201,
                 "time" => date('c'), // Fecha y hora en formato ISO-8601
                 "message" => "Datos con la incidencia MODIFICADA",
-                "data" => $incidencia
+                "data" => $response->json()
             ]);
 
         }catch(\Exception $e){
@@ -173,26 +177,28 @@ class PostController extends Controller{
     public function deleteIncidencia($id){
         
         try{
-            $incidencia = Incidencia::find($id);
-
-            if(!$incidencia){
+            //$incidencia = Incidencia::find($id);
+            $response = Http::delete('http://localhost:8080/spring/delete/'.$id);
+            
+            if(!$response->successful()){
 
                 return response()->json([
                     "status" => "error",
                     "code" => 406,
                     "time" => now()->toIso8601String(),
                     "message" => "Incidencia no encontrada",
-                    "data" => "id = ".$id
+                    "data" => $response->body()
                 ], 406);
             }
 
-            $incidencia->delete($id);
+            //$incidencia->delete($id);
 
             return response()->json([
                 "status" => "success",
                 "code" => 204,
                 "time" => now()->toIso8601String(),
-                "message" => "Incidencia eliminada = ".$id
+                "message" => "Incidencia eliminada = ".$id,
+                "data" => $response->body()
             ], 200);
 
         }catch(\Exception $e){
