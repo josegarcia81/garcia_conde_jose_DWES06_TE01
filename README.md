@@ -1,2 +1,2 @@
 # DWES06
-Laravel controller and SpringBot backend
+Laravel backend controller and SpringBoot backend microservice controller
