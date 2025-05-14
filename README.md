@@ -8,5 +8,5 @@
 
 ## MICROSERVICIO SPRINGBOOT
 
-- Este microservicio en framework SpringBoot recibirá las peticiones Http de el backend Laravel y se encargará de gestionar la base de datos, que almacena incidencias registradas por una empresa, en funcion de las mismas.
+- Este microservicio en framework SpringBoot recibirá las peticiones Http de el backend Laravel y se encargará de gestionar la base de datos(MySql), que almacena incidencias registradas por una empresa, en funcion de las mismas.
 - Devolverá los datos o los posibles errores en formato json para su posterior control en el backend.
