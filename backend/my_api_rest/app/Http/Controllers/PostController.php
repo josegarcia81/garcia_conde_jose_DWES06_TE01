@@ -16,25 +16,8 @@ class PostController extends Controller{
     public function getAll(){
         // Uso Try para controlar errores
         try{
-            // // Consulta directa sobre la base de datos
-            // $data = DB::table('incidencias')
-            //                     ->join('trabajadores','incidencias.idTrabajador','trabajadores.idTrabajador')
-            //                     ->join('instalaciones','incidencias.idInstalacion','instalaciones.idInstalacion')
-            //                     ->orderBy('id','asc')
-            //                     ->get();
-
-            // // Mapeo de la respuesta para poder enviar datos de las otras tablas como los nombres //
-            // $incidencias = $data->map(fn($incidencia)=>new IncidenciasDTO(
-            //                                                 $incidencia->id,
-            //                                                 $incidencia->idTrabajador,
-            //                                                 $incidencia->nombreTrabajador,
-            //                                                 $incidencia->idInstalacion,
-            //                                                 $incidencia->nombreInstalacion,
-            //                                                 $incidencia->hora,
-            //                                                 $incidencia->descripcion)
-            //                         );
             $response = Http::get('http://localhost:8080/spring/getAll');
-            // return $response->json();
+            // Respuesta ok
             return response()->json([
                 "status" => "success",
                 "code" => 200,
@@ -59,8 +42,6 @@ class PostController extends Controller{
     public function getById($id){
 
         try{
-            // // Consulta directa sobre la tabla que corresponde con el modelo
-            // $incidencia = Incidencia::find($id);
             $response = Http::get('http://localhost:8080/spring/getById/'.$id);
             // Control busqueda de incidencia
             if ($response->status() === 404) {
@@ -72,8 +53,7 @@ class PostController extends Controller{
                     "data" => null
                 ], 406);
             }
-            
-
+            // Respuesta ok
             return response()->json([
                 "status" => "success",
                 "code" => 200,
@@ -104,8 +84,6 @@ class PostController extends Controller{
                 'descripcion' => 'required|string'
             ]);
 
-            // Crear la incidencia
-            //$incidencia = Incidencia::create($dataVal);
             $response = Http::post('http://localhost:8080/spring/create',$dataVal);
             
             return response()->json([
@@ -139,9 +117,8 @@ class PostController extends Controller{
                 'descripcion' => 'required|string'
             ]);
 
-            //$incidencia = Incidencia::find($id);
             $response = Http::put('http://localhost:8080/spring/update/'.$id,$dataVal);
-
+            // Control de incidencia no encontrada
             if(!$response->successful()){
                 return response()->json([
                     "status" => "error",
@@ -151,9 +128,7 @@ class PostController extends Controller{
                     "data" => $response->json()
                 ],406);
             }
-            // Actualizar incidencia
-            //$incidencia->update($dataVal);
-
+            // Respuesta ok
             return response()->json([
                 "status" => "success",
                 "code" => 201,
@@ -177,7 +152,6 @@ class PostController extends Controller{
     public function deleteIncidencia($id){
         
         try{
-            //$incidencia = Incidencia::find($id);
             $response = Http::delete('http://localhost:8080/spring/delete/'.$id);
             
             if(!$response->successful()){
@@ -190,9 +164,7 @@ class PostController extends Controller{
                     "data" => $response->body()
                 ], 406);
             }
-
-            //$incidencia->delete($id);
-
+            // Respuesta ok
             return response()->json([
                 "status" => "success",
                 "code" => 204,

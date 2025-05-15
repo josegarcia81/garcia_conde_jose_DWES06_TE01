@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\TrabajadorController;
 
-// Rutas para realizar consultas CRUD sobre la tabla incidencias
+// Rutas para realizar consultas CRUD sobre la tabla incidencias // Control de peticiones en Http/Controllers/
 
 Route::get('/public/post/get',[PostController::class, 'getAll']);
 
