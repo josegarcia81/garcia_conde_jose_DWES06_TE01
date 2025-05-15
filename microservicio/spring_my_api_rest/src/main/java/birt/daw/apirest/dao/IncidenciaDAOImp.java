@@ -17,7 +17,7 @@ public class IncidenciaDAOImp implements IncidenciaDAO {
 	
 	@Autowired
 	private EntityManager entityManager;
-
+	// Metodo que devuelve todas las incidencias de la BBDD //
 	@Override
 	@Transactional
 	public List<Incidencia> getAll() {
@@ -26,7 +26,7 @@ public class IncidenciaDAOImp implements IncidenciaDAO {
 		List<Incidencia> incidencias = consulta.getResultList();
 		return incidencias;
 	}
-
+	// Metodo que devuelve una incidencia //
 	@Override
 	@Transactional
 	public Incidencia getById(int id) {
@@ -34,7 +34,7 @@ public class IncidenciaDAOImp implements IncidenciaDAO {
 		Incidencia incidencia = currentSession.get(Incidencia.class, id);
 		return incidencia;
 	}
-
+	// Metodo que crea o actualiza una incidencia. Se usa el mismo metodo tanto para update como create //
 	@Override
 	@Transactional
 	public Incidencia createOrUpdate(Incidencia incidencia, int id) {
@@ -56,7 +56,7 @@ public class IncidenciaDAOImp implements IncidenciaDAO {
 	        return incidencia;
 		}
 	}
-
+	// Metodo que borra una incidencia //
 	@Override
 	@Transactional
 	public boolean delete(int id) {
