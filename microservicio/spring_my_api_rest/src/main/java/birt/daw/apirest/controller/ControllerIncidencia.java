@@ -20,6 +20,17 @@ import birt.daw.apirest.entity.Incidencia;
 import birt.daw.apirest.service.ServicioIncidencia;
 import jakarta.persistence.EntityNotFoundException;
 
+/**
+ * Controlador REST para la gestión de incidencias.
+ * <p>
+ * Este controlador expone una API REST bajo la ruta base "/spring" para realizar
+ * operaciones CRUD sobre la entidad {@link Incidencia}. Está diseñado para ser consumido
+ * por el backend Laravel.
+ * </p>
+ *
+ * @author Jose Garcia Conde
+ * @version 1.0
+ */
 @RestController
 @RequestMapping("/spring")
 public class ControllerIncidencia {
@@ -27,11 +38,24 @@ public class ControllerIncidencia {
 	@Autowired
 	private ServicioIncidencia servicioIncidencia;
 	
+	/**
+	 * Obtiene el listado completo de todas las incidencias registradas.
+	 *
+	 * @return List&lt;Incidencia&gt; Lista de objetos Incidencia encontrados en la base de datos.
+	 *         Devuelve una lista vacía si no hay registros.
+	 */
 	@GetMapping("/getAll")
 	public List<Incidencia> getAll(){
 		return servicioIncidencia.getAll();
 	}
 	
+	/**
+	 * Busca una incidencia específica por su identificador único.
+	 *
+	 * @param id El ID de la incidencia a buscar.
+	 * @return Incidencia El objeto encontrado.
+	 * @throws ResponseStatusException Si no se encuentra ninguna incidencia con el ID proporcionado (HTTP 404).
+	 */
 	@GetMapping("/getById/{id}")
 	public Incidencia getById(@PathVariable int id) {
 		Incidencia incidencia = servicioIncidencia.getById(id);
@@ -42,6 +66,12 @@ public class ControllerIncidencia {
 		return incidencia;
 	}
 	
+	/**
+	 * Crea un nuevo registro de incidencia en la base de datos.
+	 *
+	 * @param incidencia Objeto {@link Incidencia} con los datos a persistir (idTrabajador, idInstalacion, hora, descripcion).
+	 * @return ResponseEntity&lt;Incidencia&gt; Respuesta HTTP 201 (Created) con el objeto guardado, incluyendo su nuevo ID.
+	 */
 	@PostMapping("/create")
 	public ResponseEntity<Incidencia> create(@RequestBody Incidencia incidencia) {
 		//incidencia.setId(0);
@@ -52,6 +82,15 @@ public class ControllerIncidencia {
 		return ResponseEntity.status(HttpStatus.CREATED).body(nuevaIncidencia);
 	}
 	
+	/**
+	 * Actualiza los datos de una incidencia existente.
+	 *
+	 * @param incidencia Objeto {@link Incidencia} con los nuevos datos.
+	 * @param id El ID de la incidencia que se desea modificar.
+	 * @return ResponseEntity&lt;?&gt; Respuesta HTTP 200 (OK) con la incidencia actualizada,
+	 *         o HTTP 404 (Not Found) si no existe el registro.
+	 *         En caso de error interno, devuelve HTTP 500.
+	 */
 	@PutMapping("/update/{id}")
 	public ResponseEntity<?> update(@RequestBody Incidencia incidencia, @PathVariable int id) {
 		
@@ -71,6 +110,14 @@ public class ControllerIncidencia {
 	    }
 	}
 	
+	/**
+	 * Elimina una incidencia de la base de datos.
+	 *
+	 * @param id El ID de la incidencia a eliminar.
+	 * @return ResponseEntity&lt;?&gt; Respuesta HTTP 200 con mensaje de éxito si se elimina correctamente,
+	 *         o HTTP 404 si el ID no existe.
+	 *         Puede devolver HTTP 500 si ocurre un error durante el proceso.
+	 */
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> delete(@PathVariable int id) {
 		try {
